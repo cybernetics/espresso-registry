@@ -50,6 +50,9 @@ pub async fn init(dap: &DynamicAbsolutePaths) -> result::Result<Vec<Package>, Bo
     // iterate over the paths, parse them
     let mut packages: Vec<Package> = vec![];
     for p in paths {
+        if !p.ends_with(".json") {
+            return Err(util::error::EspressoError::nib(format!("'{}' is not a .json file", p).as_str()));
+        }
         let content = String::from_utf8(fs::read(p)?)?;
         packages.push(parse(content)?);
     }
