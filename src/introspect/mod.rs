@@ -2,7 +2,7 @@ use std::{error, fs, result};
 
 use serde::{Deserialize, Serialize};
 
-use crate::util;
+use crate::{context::DynamicAbsolutePaths, util};
 
 
 /// Represents a package.
@@ -44,13 +44,13 @@ fn parse(content: String) -> result::Result<Package, Box<dyn error::Error>> {
 /// 
 /// # Returns
 /// `result::Result`, `Ok` is a `Vec` of `Package` structs and `Err` is propagated errors from underlying calls.
-pub fn introspect() -> result::Result<Vec<Package>, Box<dyn error::Error>> {
-    let paths = util::directory::read_files_recursively("registry".to_string())?;
+pub async fn init(dap: &DynamicAbsolutePaths) -> result::Result<Vec<Package>, Box<dyn error::Error>> {
+    let paths = util::directory::read_files_recursively(dap.registry.clone()).await?;
 
     // iterate over the paths, parse them
     let mut packages: Vec<Package> = vec![];
-    for path in paths {
-        let content = String::from_utf8(fs::read(path)?)?;
+    for p in paths {
+        let content = String::from_utf8(fs::read(p)?)?;
         packages.push(parse(content)?);
     }
 

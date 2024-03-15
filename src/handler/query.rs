@@ -2,8 +2,7 @@ use actix_web::{get, web, Responder, Result};
 use crate::dto;
 
 #[get("/search")]
-pub async fn search_registry(l: web::Data<slog::Logger>, _term: web::Query<dto::request::GetRegistrySearchQueryParams>) -> Result<impl Responder> {
-    slog::info!(l, "Logging from within a request handler");
+pub async fn search_registry(_term: web::Query<dto::request::GetRegistrySearchQueryParams>) -> Result<impl Responder> {
     let resp = dto::response::GetRegistryResponse {
         group_id: "org.projectlombok".to_string(),
         artifact_id: "lombok".to_string(),
