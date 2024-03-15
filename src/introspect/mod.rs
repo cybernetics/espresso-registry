@@ -1,7 +1,6 @@
 use std::{error, fs, result};
 
 use serde::{Deserialize, Serialize};
-use slog::info;
 
 use crate::util;
 
@@ -36,7 +35,7 @@ pub struct PackageVersion {
 /// 
 /// # Returns
 /// `result::Result`, `Ok` is a `Package` struct and `Err` is propagated errors from underlying calls.
-fn parse(l: slog::Logger,content: String) -> result::Result<Package, Box<dyn error::Error>> {
+fn parse(content: String) -> result::Result<Package, Box<dyn error::Error>> {
     let package: Package = serde_json::from_str(&content)?;
     Ok(package)
 }
@@ -45,15 +44,14 @@ fn parse(l: slog::Logger,content: String) -> result::Result<Package, Box<dyn err
 /// 
 /// # Returns
 /// `result::Result`, `Ok` is a `Vec` of `Package` structs and `Err` is propagated errors from underlying calls.
-pub fn introspect(l: slog::Logger) -> result::Result<Vec<Package>, Box<dyn error::Error>> {
+pub fn introspect() -> result::Result<Vec<Package>, Box<dyn error::Error>> {
     let paths = util::directory::read_files_recursively("registry".to_string())?;
 
     // iterate over the paths, parse them
     let mut packages: Vec<Package> = vec![];
     for path in paths {
-        info!(l, "Introspecting: {}", path);
         let content = String::from_utf8(fs::read(path)?)?;
-        packages.push(parse(l, content)?);
+        packages.push(parse(content)?);
     }
 
     Ok(packages)
