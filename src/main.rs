@@ -5,11 +5,13 @@ mod dto;
 mod introspect;
 mod service;
 mod util;
-use actix_web::{get, web, App, HttpServer, Responder};
+use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 
-#[get("/hello/{name}")]
-async fn greet(name: web::Path<String>) -> impl Responder {
-    format!("Hello, {}", name)
+async fn not_found() -> actix_web::Result<HttpResponse> {
+    let resp = dto::response::generic::DefaultServiceResponse{
+        msg: "A handler for the provided URL could not be found".to_string()
+    };
+    Ok(HttpResponse::NotFound().json(resp))
 }
 
 #[actix_web::main]
@@ -21,6 +23,7 @@ async fn main() -> std::io::Result<()>{
         App::new()
         .app_data(web::Data::new(log.clone()))
         .service(handler::query::search_registry)
+        .default_service(web::route().to(not_found))
     })
     
     .bind(("127.0.0.1", 8080))?
