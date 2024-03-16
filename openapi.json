@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "servers": [
         {
-            "url": "https://v1.registry.espresso.io",
+            "url": "https://registry.espresso.io/v1",
             "description": "Production"
         }
     ],
@@ -18,12 +18,33 @@
     "paths": {
         "/search": {
             "get": {
-                "tags": ["Query"],
-                "summary": "Query the registry for packages",
-                "description": "Queries the registry for a list of packages matching the provided query",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search term",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "lombok"
+                    }
+                ],
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search the registry",
+                "description": "Search the registry for a list of packages matching the provided parameters.",
                 "responses": {
                     "200": {
-                        "description": "Successful response"
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/QueryPackagesResponse"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -33,6 +54,7 @@
         "schemas": {
             "QueryPackagesResponse": {
                 "type": "object",
+                "description": "Data transfer object for a list of packages",
                 "properties": {
                     "packages": {
                         "type": "array",
@@ -40,7 +62,8 @@
                             "$ref": "#/components/schemas/Package"
                         }
                     }
-                }
+                },
+                "required": ["packages"]
             },
             "Package": {
                 "type": "object",
@@ -58,9 +81,29 @@
                                 "type": "string",
                                 "example": "https://foo.com/code/repository"
                             }
-                        }
+                        },
+                        "required": ["versions", "source_repository"]
                     }
-                }
+                },
+                "required": ["metadata"]
+            },
+            "PackageVulnerability": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "CVE-2021-44228"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "A really bad vulnerability. You should fix this."
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "https://nvd.nist.gov/vuln/detail/CVE-2021-44228"
+                    }
+                },
+                "required": ["name", "description", "url"]
             },
             "PackageVersion": {
                 "type": "object",
@@ -76,7 +119,10 @@
                         }
                     },
                     "vulnerabilities": {
-                        "type": "object"
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PackageVulnerability"
+                        }
                     },
                     "artifact_url": {
                         "type": "string",
@@ -86,11 +132,14 @@
                         "type": "string",
                         "example": "aisud9139083yuibzjkbvdw112213thiswillbemuchlonger"
                     }
-                }
+                },
+                "required": ["version", "flags", "vulnerabilities", "artifact_url", "sha512sum"]
             },
             "PackageFlag": {
                 "type": "string",
-                "enum": ["annotation_processor"]
+                "enum": [
+                    "annotation_processor"
+                ]
             }
         }
     }
