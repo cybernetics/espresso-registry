@@ -11,10 +11,87 @@
         "version": "1.0.0",
         "description": "The package registry fro Espresso (a modern Java build tool)",
         "license": {
-            "name": "MIT",
+            "name": "MIT License",
             "url": "https://opensource.org/license/mit"
         }
     },
-    "paths": {},
-    "components": {}
+    "paths": {
+        "/search": {
+            "get": {
+                "tags": ["Query"],
+                "summary": "Query the registry for packages",
+                "description": "Queries the registry for a list of packages matching the provided query",
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "QueryPackagesResponse": {
+                "type": "object",
+                "properties": {
+                    "packages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Package"
+                        }
+                    }
+                }
+            },
+            "Package": {
+                "type": "object",
+                "properties": {
+                    "metadata": {
+                        "type": "object",
+                        "properties": {
+                            "versions": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PackageVersion"
+                                }
+                            },
+                            "source_repository": {
+                                "type": "string",
+                                "example": "https://foo.com/code/repository"
+                            }
+                        }
+                    }
+                }
+            },
+            "PackageVersion": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "string",
+                        "example": "1.0.0"
+                    },
+                    "flags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PackageFlag"
+                        }
+                    },
+                    "vulnerabilities": {
+                        "type": "object"
+                    },
+                    "artifact_url": {
+                        "type": "string",
+                        "example": "https://foo.com/code/artifact.jar"
+                    },
+                    "sha512sum": {
+                        "type": "string",
+                        "example": "aisud9139083yuibzjkbvdw112213thiswillbemuchlonger"
+                    }
+                }
+            },
+            "PackageFlag": {
+                "type": "string",
+                "enum": ["annotation_processor"]
+            }
+        }
+    }
 }
