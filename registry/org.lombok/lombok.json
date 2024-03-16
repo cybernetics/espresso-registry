@@ -1,6 +1,4 @@
 {
-    "group_id": "org.projectlombok",
-    "artifact_id": "lombok",
     "source_repository": "https://github.com/projectlombok/lombok",
     "versions": [
         {

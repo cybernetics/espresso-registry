@@ -7,10 +7,16 @@ mod service;
 mod util;
 mod context;
 
-use std::{error, result};
+use std::{error, result, sync::Mutex};
 
 use actix_web::{get, middleware, web, App, HttpResponse, HttpServer, Responder};
+use introspect::Package;
+use serde::Serialize;
 use tracing::{error, info};
+
+struct IntrospectedPackages {
+    packages: Mutex<Vec<Package>>
+}
 
 async fn not_found() -> actix_web::Result<HttpResponse> {
     let resp = dto::response::generic::DefaultServiceResponse{
@@ -39,18 +45,23 @@ async fn main() -> std::io::Result<()>{
 
     // introspect
     info!("Introspecting the registry @ '{}'", &dap.registry);
-    let files = match introspect::init(&dap).await {
+    let packages = match introspect::init(&dap).await {
         Ok(v) => v,
         Err(e) => {
             error!("Failed to introspect: {}", e);
             panic!();
         }
     };
-    println!("{:?}", files);
-
+    let packages_data = web::Data::new(
+        IntrospectedPackages {
+            packages: Mutex::new(packages.clone())
+        }
+    );
+    
     HttpServer::new(move || {
         App::new()
         .wrap(middleware::Logger::default())
+        .app_data(packages_data.clone())
         .service(handler::query::search_registry)
         .default_service(web::route().to(not_found))
     })

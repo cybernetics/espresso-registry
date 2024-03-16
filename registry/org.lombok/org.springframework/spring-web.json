@@ -1,0 +1,12 @@
+{
+    "source_repository": "https://github.com/spring-projects/spring-framework",
+    "versions": [
+        {
+            "version": "6.1.5",
+            "flags": ["annotation_processor"],
+            "vulnerabilities": {},
+            "artifact_url": "https://repo1.maven.org/maven2/org/springframework/spring-web/6.1.5/spring-web-6.1.5.jar",
+            "sha512sum": "d906bc65419c978a20434f161776fa04574baabf9a820dfaeda96b1dbc57c763a5539e3e8a4efed2ceccbea43a4f27f380e827cffa0498e9522e5ef2eb0287a9"
+        }
+    ]
+}

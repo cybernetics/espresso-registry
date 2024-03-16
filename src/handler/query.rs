@@ -1,12 +1,15 @@
+use std::ops::Deref;
+
 use actix_web::{get, web, Responder, Result};
-use crate::dto;
+use crate::{dto, introspect, IntrospectedPackages};
 
 #[get("/search")]
-pub async fn search_registry(_term: web::Query<dto::request::GetRegistrySearchQueryParams>) -> Result<impl Responder> {
+pub async fn search_registry(q: web::Query<dto::request::GetRegistrySearchQueryParams>, introspected_packages: web::Data<IntrospectedPackages>) -> Result<impl Responder> {
+    let packages: std::sync::MutexGuard<'_, Vec<crate::introspect::Package>> = introspected_packages.packages.lock().expect("failed to lock packages, this is indicative of something very wrong");
+    let matches = introspect::query(q.q.clone(), packages.clone());
+    println!("{:?}", matches);
     let resp = dto::response::GetRegistryResponse {
-        group_id: "org.projectlombok".to_string(),
-        artifact_id: "lombok".to_string(),
-        ref_: "asujdhiu12hu31897d89gf8934yhijsjndlaicjASDIOu897892137uhq".to_string()
+        packages: matches
     };
     Ok(web::Json(resp))
 }
