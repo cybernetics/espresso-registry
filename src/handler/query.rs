@@ -7,7 +7,7 @@ use crate::{dto, introspect, IntrospectedPackages};
 pub async fn search_registry(q: web::Query<dto::request::GetRegistrySearchQueryParams>, introspected_packages: web::Data<IntrospectedPackages>) -> Result<impl Responder> {
     let packages: std::sync::MutexGuard<'_, Vec<crate::introspect::Package>> = introspected_packages.packages.lock().expect("failed to lock packages, this is indicative of something very wrong");
     let matches = introspect::query(q.q.clone(), packages.clone());
-    let resp = dto::response::GetRegistryResponse {
+    let resp = dto::response::QueryPackagesResponse {
         packages: matches
     };
     Ok(web::Json(resp))

@@ -5,6 +5,6 @@ use serde::Serialize;
 use crate::introspect::Package;
 
 #[derive(Serialize)]
-pub struct GetRegistryResponse {
+pub struct QueryPackagesResponse {
     pub packages: Vec<Package>
 }

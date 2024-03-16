@@ -1,0 +1,146 @@
+{
+    "openapi": "3.0.0",
+    "servers": [
+        {
+            "url": "https://registry.espresso.io/v1",
+            "description": "Production"
+        }
+    ],
+    "info": {
+        "title": "Espresso Registry",
+        "version": "1.0.0",
+        "description": "The package registry fro Espresso (a modern Java build tool)",
+        "license": {
+            "name": "MIT License",
+            "url": "https://opensource.org/license/mit"
+        }
+    },
+    "paths": {
+        "/search": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search term",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "lombok"
+                    }
+                ],
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search the registry",
+                "description": "Search the registry for a list of packages matching the provided parameters.",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/QueryPackagesResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "QueryPackagesResponse": {
+                "type": "object",
+                "description": "Data transfer object for a list of packages",
+                "properties": {
+                    "packages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Package"
+                        }
+                    }
+                },
+                "required": ["packages"]
+            },
+            "Package": {
+                "type": "object",
+                "properties": {
+                    "metadata": {
+                        "type": "object",
+                        "properties": {
+                            "versions": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PackageVersion"
+                                }
+                            },
+                            "source_repository": {
+                                "type": "string",
+                                "example": "https://foo.com/code/repository"
+                            }
+                        },
+                        "required": ["versions", "source_repository"]
+                    }
+                },
+                "required": ["metadata"]
+            },
+            "PackageVulnerability": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "CVE-2021-44228"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "A really bad vulnerability. You should fix this."
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "https://nvd.nist.gov/vuln/detail/CVE-2021-44228"
+                    }
+                },
+                "required": ["name", "description", "url"]
+            },
+            "PackageVersion": {
+                "type": "object",
+                "properties": {
+                    "version": {
+                        "type": "string",
+                        "example": "1.0.0"
+                    },
+                    "flags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PackageFlag"
+                        }
+                    },
+                    "vulnerabilities": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PackageVulnerability"
+                        }
+                    },
+                    "artifact_url": {
+                        "type": "string",
+                        "example": "https://foo.com/code/artifact.jar"
+                    },
+                    "sha512sum": {
+                        "type": "string",
+                        "example": "aisud9139083yuibzjkbvdw112213thiswillbemuchlonger"
+                    }
+                },
+                "required": ["version", "flags", "vulnerabilities", "artifact_url", "sha512sum"]
+            },
+            "PackageFlag": {
+                "type": "string",
+                "enum": [
+                    "annotation_processor"
+                ]
+            }
+        }
+    }
+}
