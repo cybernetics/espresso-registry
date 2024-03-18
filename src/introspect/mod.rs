@@ -97,8 +97,8 @@ pub async fn init(
         let content = String::from_utf8(fs::read(p)?)?;
         let package_metadata = parse(content)?;
         packages.push(Package {
-            artifact_id: gid.to_string(),
-            group_id: aid.to_string(),
+            artifact_id: aid.to_string(),
+            group_id: gid.to_string(),
             metadata: package_metadata,
             ref_
         });
