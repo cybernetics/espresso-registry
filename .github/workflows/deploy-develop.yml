@@ -21,4 +21,4 @@ jobs:
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
           if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
       - name: Deploy
-        run: ssh -o BatchMode=yes ${{ secrets.SSH_USERNAME_HOST }} "${{ secrets.DEPLOY_COMMAND }}"
+        run: ssh -v -o BatchMode=yes ${{ secrets.SSH_USERNAME_HOST }} "${{ secrets.DEPLOY_COMMAND }}"
