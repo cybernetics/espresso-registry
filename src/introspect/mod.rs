@@ -123,7 +123,7 @@ pub async fn init(
 /// 
 /// # Returns
 /// A `Vec<Package>`, containing any packages that meet the query term.
-pub fn query(q: String, packages: Vec<Package>) -> Vec<Package> {
+pub fn query(q: String, packages: &Vec<Package>) -> Vec<Package> {
     let mut matches: Vec<Package> = vec![];
     let l_q = q.to_lowercase();
 
@@ -134,9 +134,9 @@ pub fn query(q: String, packages: Vec<Package>) -> Vec<Package> {
 
         // if artifact id contains the search term
         if l_artifact_id.contains(&l_q) || l_group_id.contains(&l_q) || p.ref_ == l_q {
-            matches.push(p);
+            matches.push(p.clone());
         }
-    }
+    } 
 
     matches
 }

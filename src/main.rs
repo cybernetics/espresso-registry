@@ -7,15 +7,15 @@ mod service;
 mod util;
 mod context;
 
-use std::{error, result, sync::Mutex};
+use std::{borrow::Cow, error, result, sync::Mutex};
 
 use actix_web::{get, middleware, web, App, HttpResponse, HttpServer, Responder};
 use introspect::Package;
 use serde::Serialize;
 use tracing::{error, info};
 
-struct IntrospectedPackages {
-    packages: Mutex<Vec<Package>>
+struct IntrospectedPackages<'a>{
+    packages: Cow<'a, Vec<Package>>
 }
 
 async fn not_found() -> actix_web::Result<HttpResponse> {
@@ -54,7 +54,7 @@ async fn main() -> std::io::Result<()>{
     };
     let packages_data = web::Data::new(
         IntrospectedPackages {
-            packages: Mutex::new(packages.clone())
+            packages: Cow::Owned(packages.clone())
         }
     );
     
