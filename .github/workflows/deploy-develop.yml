@@ -1,10 +1,12 @@
-name: Deploy to the Develop server
+name: Deploy (Develop)
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Docker"]
+    branches: [main]
+    types:
+      - completed
 
 jobs:
   deploy:
