@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Remove SSH Key(s)
         continue-on-error: true
-        run: ssh-keygen -f "/home/runner/.ssh/known_hosts" -R "hlafaille.xyz"
+        run: ssh-keygen -f "/home/runner/.ssh/known_hosts" -R ${{ secrets.SSH_HOST }}
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
