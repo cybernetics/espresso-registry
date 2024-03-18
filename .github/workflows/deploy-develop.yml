@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: develop
     steps:
+      - name: Remove SSH Key(s)
+        run: ssh-keygen -f "/home/runner/.ssh/known_hosts" -R "hlafaille.xyz"
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
